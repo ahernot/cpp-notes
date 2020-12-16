@@ -1,59 +1,60 @@
-#include<iostream>
-#include<vector>
+#include <iostream>
+#include <vector>
 
 
 /*
-g++ -std=c++11 linked_list.cpp -o ll
+g++ -std=c++11 linked_list_v2.cpp -o ll
 ./ll
 */
 
+/*
+TO DO:
+- write class copy constructors (tough)
+- make more functions compatible with vectors as inputs
+*/
 
-// write class copy constructors (tough)
-// use templates
 
 
-
-
-
-class IntNode {
+template <typename T>
+class Node {
 
     protected:
-        IntNode* _previous; // pointer to the previous node
-        IntNode* _next; // pointer to the next node
-        int _val; // node value
+        Node* _previous; // pointer to the previous node
+        Node* _next; // pointer to the next node
+        T _val; // node value
 
     public:
         // Class constructors
-        IntNode(): _val(0), _previous(nullptr), _next(nullptr) {};
-        IntNode(const int& val): _val(val), _previous(nullptr), _next(nullptr) {};
-        IntNode(const int& val, IntNode* previous): _val(val), _previous(previous), _next(nullptr) {}; // not very useful
-        IntNode(const int& val, IntNode* previous, IntNode* next): _val(val), _previous(previous), _next(next) {};
+        Node(): _val(T()), _previous(nullptr), _next(nullptr) {};
+        Node(const T& val): _val(val), _previous(nullptr), _next(nullptr) {};
+        Node(const T& val, Node* previous): _val(val), _previous(previous), _next(nullptr) {}; // not very useful
+        Node(const T& val, Node* previous, Node* next): _val(val), _previous(previous), _next(next) {};
 
         /*// Class copy constructor (doesn't work as would need to generate new addresses for the referenced objects...)
-        IntNode (const IntNode& other) {
+        Node (const Node& other) {
             this->_previous = other._previous;
             this->_next = other._next;
             this->_val = other._val;
         };*/
 
-        void set_previous (IntNode* previous) {
+        void set_previous (Node* previous) {
             this->_previous = previous;
         };
 
-        void set_next (IntNode* next) {
+        void set_next (Node* next) {
             this->_next = next;
         };
 
 
-        IntNode* get_previous () {
+        Node* get_previous () {
             return this->_previous;
         };
 
-        IntNode* get_next () {
+        Node* get_next () {
             return this->_next;
         };
 
-        int get_val () {
+        T get_val () {
             return this->_val;
         };
 
@@ -74,18 +75,17 @@ class IntNode {
 
 
 
-
-
-class IntLinkedList {
+template <typename T>
+class LinkedList {
 
     protected:
-        IntNode* _front;
-        IntNode* _back;
+        Node<T>* _front;
+        Node<T>* _back;
 
 
         void regen_front() {
             // Go from _back to the furthest front it can find
-            IntNode* current = this->_back; // Set the current node as the last one
+            Node<T>* current = this->_back; // Set the current node as the last one
 
             while (current != nullptr) {
 
@@ -98,7 +98,7 @@ class IntLinkedList {
 
         void regen_back() {
             // Go from _front to the furthest back it can find
-            IntNode* current = this->_front; // Set the current node as the first one
+            Node<T>* current = this->_front; // Set the current node as the first one
 
             while (current != nullptr) {
 
@@ -111,25 +111,24 @@ class IntLinkedList {
 
     public:
         // Class constructors
-        IntLinkedList (): _front(nullptr), _back(nullptr) {};
-        IntLinkedList (std::vector<int> vect): _front(nullptr), _back(nullptr) {
+        LinkedList (): _front(nullptr), _back(nullptr) {};
+        LinkedList (std::vector<T> vect): _front(nullptr), _back(nullptr) {
             this->add_back(vect); // Fill the linked list
         };
 
-
         /*// Class copy constructor (doesn't work)
-        IntLinkedList (const IntLinkedList& other) {
+        LinkedList (const LinkedList& other) {
             
             // Copy front node
-            IntNode front_copy;
+            Node front_copy;
             front_copy = *(other._front); // copy the node
             this->_front = front_copy*;
 
-            IntNode* current = (other._front)->get_next();
+            Node* current = (other._front)->get_next();
             // Copy all intermediary nodes (when correctly linked)
             while ((current != other._back) && (current != nullptr)) {
 
-                IntNode copy;
+                Node copy;
                 copy = *current; // copy the node
 
                 // Move to next node
@@ -139,7 +138,7 @@ class IntLinkedList {
         };*/
 
         // Class destructor
-        ~IntLinkedList () {
+        ~LinkedList () {
             // Delete front until only nullptr left
             while (this->_front != nullptr) {
                 this->remove_front();
@@ -159,7 +158,7 @@ class IntLinkedList {
             //(this->_front)->print_detailed();
 
             // Initialise the current node (as the second value)
-            IntNode* current = (this->_front)->get_next();
+            Node<T>* current = (this->_front)->get_next();
 
             // Print body
             while ((current != this->_back) && (current != nullptr)) {
@@ -181,13 +180,13 @@ class IntLinkedList {
         };
 
 
-        void add_front (const int& val) {
+        void add_front (const T& val) {
 
             // Save previous front
-            IntNode* prev_front = this->_front;
+            Node<T>* prev_front = this->_front;
             
             // Set _front to new front node
-            this->_front = new IntNode (val, nullptr, this->_front); // Create the IntNode object and link it to prev_front
+            this->_front = new Node<T> (val, nullptr, this->_front); // Create the Node object and link it to prev_front
 
             // Link previous front to _front
             if (prev_front != nullptr) {
@@ -202,21 +201,21 @@ class IntLinkedList {
         };
 
 
-        void add_front (std::vector<int> vect) {
-            std::vector<int>::iterator it;
+        void add_front (const std::vector<T> vect) {
+            typename std::vector<T>::iterator it;
             for (it=vect.end(); it!=vect.begin(); it--) {
                 this->add_front(*it);
             };
         };
 
 
-        void add_back (const int& val) {
+        void add_back (const T& val) {
 
             // Save previous back
-            IntNode* prev_back = this->_back;
+            Node<T>* prev_back = this->_back;
             
             // Set _back to new back node
-            this->_back = new IntNode (val, this->_back, nullptr);
+            this->_back = new Node<T> (val, this->_back, nullptr);
 
             // Link previous back to _back
             if (prev_back != nullptr) {
@@ -231,23 +230,23 @@ class IntLinkedList {
         };
 
 
-        void add_back (std::vector<int> vect) {
-            std::vector<int>::iterator it;
+        void add_back (const std::vector<T> vect) {
+            typename std::vector<T>::iterator it;
             for (it=vect.begin(); it!=vect.end(); it++) {
                 this->add_back(*it);
             };
         };
 
 
-        void add_after (const int& val, IntNode* pos) {
+        void add_after (const T& val, Node<T>* pos) {
 
             if (pos == nullptr) {throw 1;};
             
             // Get next node
-            IntNode* pos_next = pos->get_next();
+            Node<T>* pos_next = pos->get_next();
 
             // Create new node and link it
-            IntNode* pos_new = new IntNode (val, pos, pos_next);
+            Node<T>* pos_new = new Node<T> (val, pos, pos_next);
 
             // Point previous node to new node
             pos->set_next(pos_new);
@@ -260,15 +259,15 @@ class IntLinkedList {
         };
 
 
-        void add_before (const int& val, IntNode* pos) {
+        void add_before (const T& val, Node<T>* pos) {
 
             if (pos == nullptr) {throw 1;};
 
             // Get previous node
-            IntNode* pos_previous = pos->get_previous();
+            Node<T>* pos_previous = pos->get_previous();
 
             // Create new node and link it
-            IntNode* pos_new = new IntNode (val, pos_previous, pos);
+            Node<T>* pos_new = new Node<T> (val, pos_previous, pos);
 
             // Point previous node to new node
             if (pos_previous != nullptr) {
@@ -281,10 +280,10 @@ class IntLinkedList {
         };
 
 
-        int add_in_position (const int& val, const int& pos) {
+        int add_in_position (const T& val, const int& pos) {
 
             // Initialise pointer and counter
-            IntNode* current = this->_front;
+            Node<T>* current = this->_front;
             int current_pos = 0;
 
             // Run through nodes
@@ -292,7 +291,7 @@ class IntLinkedList {
                 
                 // Add before once reached required position
                 if (pos == current_pos) {
-                    add_before(val, current);
+                    this->add_before(val, current);
                     return 0;
                 };
 
@@ -302,19 +301,31 @@ class IntLinkedList {
 
             };
 
+            // Process last item of list
+            if (current != nullptr) {
+                current = current->get_next(); // getting this->_back
+                current_pos ++;
+
+                if (pos == current_pos) {
+                    this->add_before(val, current);
+                    return 0;
+                };
+
+            };
+
             return 1; // failure
 
         };
 
 
-        int remove(IntNode* pos) {
+        T remove(Node<T>* pos) {
 
             // Get previous and next
-            IntNode* pos_previous = pos->get_previous();
-            IntNode* pos_next = pos->get_next();
+            Node<T>* pos_previous = pos->get_previous();
+            Node<T>* pos_next = pos->get_next();
 
             // Get value to return
-            int pos_val = pos->get_val();
+            T pos_val = pos->get_val();
 
             // Delete pos
             delete pos;
@@ -335,12 +346,50 @@ class IntLinkedList {
         };
 
 
-        int remove_front () {
+        int remove_in_position (const int& pos) {
+
+            // Initialise pointer and counter
+            Node<T>* current = this->_front;
+            int current_pos = 0;
+
+            // Run through nodes
+            while ((current != this->_back) && (current != nullptr)) {
+                
+                // Add before once reached required position
+                if (pos == current_pos) {
+                    this->remove(current);
+                    return 0;
+                };
+
+                // Move to next node and increment counter
+                current = current->get_next();
+                current_pos ++;
+
+            };
+
+            // Process last item of list
+            if (current != nullptr) {
+                current = current->get_next(); // getting this->_back
+                current_pos ++;
+
+                if (pos == current_pos) {
+                    this->remove(current);
+                    return 0;
+                };
+
+            };
+
+            return 1; // failure
+
+        };
+
+
+        T remove_front () {
 
             // Get second node
-            IntNode* next_front = (this->_front) -> get_next();
+            Node<T>* next_front = (this->_front) -> get_next();
             // Get front value to return
-            int front_val = (this->_front) -> get_val();
+            T front_val = (this->_front) -> get_val();
 
             // Delete _front
             delete this->_front;
@@ -359,12 +408,12 @@ class IntLinkedList {
         };
 
 
-        int remove_back () {
+        T remove_back () {
 
             // Get second-to-last node
-            IntNode* next_back = (this->_back) -> get_previous();
+            Node<T>* next_back = (this->_back) -> get_previous();
             // Get back value to return
-            int back_val = (this->_back) -> get_val();
+            T back_val = (this->_back) -> get_val();
 
             // Delete _back
             delete this->_back; // Destroy the (this->_back) node
@@ -383,7 +432,7 @@ class IntLinkedList {
         };
 
 
-        bool search (const int& val) { // search from start
+        bool search (const T& val) { // search from start
 
             // Compare with last value
                 if (val == (this->_back)->get_val()) {
@@ -391,13 +440,13 @@ class IntLinkedList {
             };
             
             // Initialise pointer
-            IntNode* current = this->_front;
+            Node<T>* current = this->_front;
 
             // Run through nodes
             while ((current != this->_back) && (current != nullptr)) {
                 
                 // Get current value
-                int current_val = current->get_val();
+                T current_val = current->get_val();
                 
                 // Compare with requested value
                 if (val == current_val) {
@@ -415,9 +464,9 @@ class IntLinkedList {
         };
 
 
-        IntNode* get_front () { return this->_front; };
+        Node<T>* get_front () { return this->_front; };
 
-        IntNode* get_back () { return this->_back; };
+        Node<T>* get_back () { return this->_back; };
 
 };
 
@@ -428,7 +477,7 @@ class IntLinkedList {
 
 int main() {
 
-    IntLinkedList ll;
+    LinkedList<int> ll;
     ll.print_from_front(); std::cout << std::endl; // will be unable to print since the list is empty
 
     ll.add_back(2);
@@ -445,6 +494,29 @@ int main() {
 
     ll.remove_front();
     ll.print_from_front(); std::cout << std::endl;
+
+
+    std::cout << std::endl; std::cout << std::endl; std::cout << std::endl;
+
+
+    LinkedList<float> ll2;
+    ll2.print_from_front(); std::cout << std::endl; // will be unable to print since the list is empty
+
+    ll2.add_back(2.7);
+    ll2.print_from_front(); std::cout << std::endl;
+
+    ll2.add_back(3.1);
+    ll2.print_from_front(); std::cout << std::endl;
+
+    ll2.add_front(1.02);
+    ll2.print_from_front(); std::cout << std::endl;
+
+    ll2.remove_back();
+    ll2.print_from_front(); std::cout << std::endl;
+
+    ll2.remove_front();
+    ll2.print_from_front(); std::cout << std::endl;
+
 
     return 0;
 }
