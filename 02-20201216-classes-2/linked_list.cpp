@@ -292,7 +292,7 @@ class IntLinkedList {
                 
                 // Add before once reached required position
                 if (pos == current_pos) {
-                    add_before(val, current);
+                    this->add_before(val, current);
                     return 0;
                 };
 
