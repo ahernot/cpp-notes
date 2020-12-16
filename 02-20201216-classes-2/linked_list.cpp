@@ -302,6 +302,18 @@ class IntLinkedList {
 
             };
 
+            // Process last item of list
+            if (current != nullptr) {
+                current = current->get_next(); // getting this->_back
+                current_pos ++;
+
+                if (pos == current_pos) {
+                    this->add_before(val, current);
+                    return 0;
+                };
+
+            };
+
             return 1; // failure
 
         };
@@ -331,6 +343,44 @@ class IntLinkedList {
 
             // Return deleted value
             return pos_val;
+
+        };
+
+
+        int remove_in_position (const int& pos) {
+
+            // Initialise pointer and counter
+            IntNode* current = this->_front;
+            int current_pos = 0;
+
+            // Run through nodes
+            while ((current != this->_back) && (current != nullptr)) {
+                
+                // Add before once reached required position
+                if (pos == current_pos) {
+                    this->remove(current);
+                    return 0;
+                };
+
+                // Move to next node and increment counter
+                current = current->get_next();
+                current_pos ++;
+
+            };
+
+            // Process last item of list
+            if (current != nullptr) {
+                current = current->get_next(); // getting this->_back
+                current_pos ++;
+
+                if (pos == current_pos) {
+                    this->remove(current);
+                    return 0;
+                };
+
+            };
+
+            return 1; // failure
 
         };
 
