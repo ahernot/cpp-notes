@@ -17,7 +17,7 @@ TO DO:
 
 template <typename T>
 class Node {
-
+    
     protected:
         Node* _previous; // pointer to the previous node
         Node* _next; // pointer to the next node
