@@ -25,10 +25,11 @@ class Integer: public Number{
 
 class Integer{
     protected:
+        int _value;
 
 
     public:
-        Integer(): _value(0){};
+        // Integer(): _value(0){};
         Integer(const int& x): _value(x){};
 
         void print(){ std::cout << "Integer with value " << this->_value << std::endl; }
@@ -44,4 +45,7 @@ int main() {
     delete pi;
 
     return 0
+
+
+    // new I
 };
