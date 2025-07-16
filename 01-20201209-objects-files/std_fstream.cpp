@@ -40,12 +40,24 @@ int main() {
     std::cout << file_in.eof() << std::endl; // end of file (bool)
     file_in.close();
 
+    std::cout<<"end of file"<<std::endl;
+
     // Read line by line (line break as separator) - uses pointer
     file_in.open("output.txt");
     std::string line;
     std::getline(file_in, line); std::cout << line << std::endl; // line 1
     std::getline(file_in, line); std::cout << line << std::endl; // line 2
     std::cout << file_in.eof() << std::endl; // end of file (bool)
+    file_in.close();
+
+    std::cout<<"end of file"<<std::endl;
+
+    file_in.open("output.txt");
+    std::string word1;
+    std::string word2;
+    while (file_in >> word1 >> word2) {
+        std::cout << word1 << ", " << word2 << std::endl;
+    }
     file_in.close();
 
     /*
